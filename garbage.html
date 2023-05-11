@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html>
+	<body>
+		<canvas></canvas>
+	</body>
+
+	<script>
+		const canvas = document.querySelector('canvas');
+		canvas.width = canvas.height = 400;
+		const pen = canvas.getContext('2d');
+
+// 		const size = Object.freeze({
+// 			x: 20,
+// 			y: 20
+// 		});
+// 		const levels = 10;
+// 		const iterations = 1;
+// 		const chance = 0.1;
+// 		const span = 2;
+// 
+// 		const map = [];
+// 		for (let x = 0; x < size.x; ++x) {
+// 			for (let y = 0; y < size.x; ++y) {
+// 				(map[x] ??= [])[y] = 0;
+// 			}
+// 		}
+// 
+// 		for (let l = 0; l < levels; ++l) {
+// 			const level = [];
+// 			for (let x = 0; x < size.x; ++x) {
+// 				for (let y = 0; y < size.y; ++y) {
+// 					(level[x] ??= [])[y] = false;
+// 				}
+// 			}
+// 
+// 			for (let i = 0; i < iterations; ++i) {
+// 				const iteration = [];
+// 				for (let x = 0; x < size.x; ++x) {
+// 					for (let y = 0; y < size.y; ++y) {
+// 						(iteration[x] ??= [])[y] = false;
+// 					}
+// 				}
+// 
+// 				for (let x = 0; x < size.x; ++x) {
+// 					for (let y = 0; y < size.y; ++y) {
+// 						if ((Math.random() <= chance) && ((Math.abs(l - level[(x + 1) % size.x][y]) <= span) || (Math.abs(l - level[(x - 1 + size.x) % size.x][y]) <= span) || (Math.abs(l - level[x][(y + 1) % size.y]) <= span) || (Math.abs(l - level[x][(y - 1 + size.y) % size.y]) <= span))) {
+// 							iteration[x][y] = true;
+// 						}
+// 					}
+// 				}
+// 
+// 				for (let x = 0; x < size.x; ++x) {
+// 					for (let y = 0; y < size.y; ++y) {
+// 						level[x][y] = iteration[x][y];
+// 					}
+// 				}
+// 			}
+// 
+// 			for (let x = 0; x < size.x; ++x) {
+// 				for (let y = 0; y < size.y; ++y) {
+// 					map[x][y] += level[x][y];
+// 				}
+// 			}
+// 		}
+// 
+// 		for (let x = 0; x < 20; ++x) {
+// 			for (let y = 0; y < 20; ++y) {
+// 				const color = Math.floor(255 / (levels + 1) * map[x][y]).toString(16);
+// 				pen.fillStyle = `#${color}${color}${color}`;
+// 				pen.fillRect(x * 20, y * 20, 20, 20);
+// 			}
+// 		}
+
+const levels = 255;
+const iterations = 1;
+const chance = 0.99;
+
+const map = [];
+    for (let x = 0; x < 20; ++x) {
+        for (let y = 0; y < 20; ++y) {
+            (map[x] ??= [])[y] = 0;
+        }
+    }
+    const map2 = structuredClone(map);
+    const map3 = structuredClone(map);
+	map2[Math.floor(Math.random() * 20)][Math.floor(Math.random() * 20)] = true;
+    for (let i = 0; i < levels; ++i) {
+        for (let j = 0; j < iterations; ++j) {
+            for (let x = 0; x < 20; ++x) {
+                for (let y = 0; y < 20; ++y) {
+                    if ((map2[(x + 1) % 20][y] || map2[(x - 1 + 20) % 20][y] || map2[x][(y + 1) % 20] || map2[x][(y - 1 + 20) % 20]) && (Math.random() >= chance)) {
+                        map3[x][y] = true;
+                    }
+                }
+            }
+            for (let x = 0; x < 20; ++x) {
+                for (let y = 0; y < 20; ++y) {
+                    map2[x][y] += map3[x][y];
+                }
+            }
+        }
+        for (let x = 0; x < 20; ++x) {
+            for (let y = 0; y < 20; ++y) {
+                map[x][y] += !!map2[x][y];
+            }
+        }
+    }
+    for (let x = 0; x < 20; ++x) {
+        for (let y = 0; y < 20; ++y) {
+            const color = Math.floor(255 / levels * map[x][y]).toString(16);
+            pen.fillStyle = `#${color}${color}${color}`;
+            pen.fillRect(x * 20, y * 20, 20, 20);
+        }
+    }
+
+// 		const size = 20;
+// 		const levels = 3;
+// 		const iterations = Math.floor(Math.random() * size);
+// 		const chance = 0.95;
+// 		const span = 5;
+// 
+// 		const map = [];
+// 		for (let x = 0; x < 20; ++x) {
+// 			for (let y = 0; y < 20; ++y) {
+// 				(map[x] ??= [])[y] = 0;
+// 			}
+// 		}
+// 		for (let i = 0; i < levels; ++i) {
+// 			const map2 = structuredClone(map);
+// 			for (let j = 0; j < iterations; ++j) {
+// 				map2[Math.floor(Math.random() * 20)][Math.floor(Math.random() * 20)] = true;
+// 				for (let x = 0; x < 20; ++x) {
+// 					for (let y = 0; y < 20; ++y) {
+// 						if (((Math.abs(i - map[(x + 1) % 20][y]) <= span) || (Math.abs(i - map[(x - 1 + 20) % 20][y]) <= span) || (Math.abs(i - map[x][(y + 1) % 20]) <= span) || (Math.abs(i - map[x][(y - 1 + 20) % 20]) <= span)) && (Math.random() >= chance)) {
+// 							map2[x][y] = true;
+// 						}
+// 					}
+// 				}
+// 			}
+// 			for (let x = 0; x < 20; ++x) {
+// 				for (let y = 0; y < 20; ++y) {
+// 					map[x][y] += map2[x][y];
+// 				}
+// 			}
+// 		}
+		// for (let x = 0; x < 20; ++x) {
+		// 	for (let y = 0; y < 20; ++y) {
+		// 		const color = Math.floor(255 / (levels + 1) * map[x][y]).toString(16);
+		// 		pen.fillStyle = `#${color}${color}${color}`;
+		// 		pen.fillRect(x * 20, y * 20, 20, 20);
+		// 	}
+		// }
+	</script>
+</html>
